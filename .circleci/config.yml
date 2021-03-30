@@ -1,6 +1,6 @@
-version: 2
+version: 2.1
 jobs:
-  build-and-lint:
+  build:
     docker:
       - image: python:3.7.3-stretch
 
