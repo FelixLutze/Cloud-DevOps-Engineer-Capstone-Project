@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   test-build:
     docker:
-      - image: python:3.7.3-alpine
+      - image: python:3.7.3-stretch
 
     working_directory: ~/repo
 
