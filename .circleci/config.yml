@@ -37,8 +37,7 @@ jobs:
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
   build-container:
-    docker:
-      - image: cimg/base:2020.01
+    machine: true
 
     working_directory: ~/repo
 
