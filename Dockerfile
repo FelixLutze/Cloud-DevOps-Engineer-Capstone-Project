@@ -1,8 +1,8 @@
 FROM python:3.7.3-stretch
 
-WORKDIR /app/app/templates/
+WORKDIR /app
 
-COPY .app.py /app/
+COPY . app.py /app/
 
 # hadolint ignore=DL3013
 RUN pip install --upgrade pip &&\
