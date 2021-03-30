@@ -53,7 +53,7 @@ jobs:
       - run:
           name: Build docker container
           command: |
-            sudo docker build --tag=capstone-project .
+            docker build --tag=capstone-project .
 
 #      - run:
 #          name: Push container to Dockerhub
