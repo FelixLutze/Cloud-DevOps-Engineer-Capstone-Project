@@ -41,7 +41,7 @@ jobs:
       - image: circleci/golang:1.15
         auth:
           username: $DOCKERHUB_USERNAME
-          password: ${DOCKERHUB_PASSWORD}
+          password: $DOCKERHUB_PASSWORD
 
     working_directory: ~/repo
 
@@ -62,7 +62,7 @@ jobs:
           name: Upload Docker to Dockerhub
           command: |
             echo "Docker ID and Image: $DOCKER_IMAGE_NAME"
-            docker tag machine-learning-api $DOCKERHUB_USERNAME/$DOCKER_IMAGE_NAME:latest
+            docker tag $DOCKER_IMAGE_NAME $DOCKERHUB_USERNAME/$DOCKER_IMAGE_NAME:latest
             docker push $DOCKERHUB_USERNAME/$DOCKER_IMAGE_NAME:latest
 
 
