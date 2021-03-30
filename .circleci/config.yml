@@ -39,7 +39,7 @@ jobs:
             - hadolint
           key: hadolint
 
-workflows:
-  default:
-    jobs:
-      - build-lint
+#workflows:
+#  default:
+#    jobs:
+#      - build-lint
