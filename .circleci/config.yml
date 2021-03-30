@@ -1,4 +1,5 @@
 version: 2.1
+
 jobs:
   test-build:
     docker:
@@ -34,12 +35,30 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-      - save_cache:
-          paths:
-            - hadolint
-          key: hadolint
 
-#workflows:
-#  default:
-#    jobs:
-#      - test-build
+  build-container:
+    docker:
+      - image: python:3.7.3-stretch
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - run:
+          name: Build docker container
+          command: |
+            docker build --tag=capstone .
+
+#      - run:
+#          name: Push container to Dockerhub
+#          command: |
+
+
+
+workflows:
+  default:
+    jobs:
+      - test-build
+      - build-container:
+          requires:
+            - test-build
