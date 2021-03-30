@@ -37,27 +37,29 @@ jobs:
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
   build-container:
-    machine: true
+    docker:
+      - image: circleci/golang:1.15
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
 
     working_directory: ~/repo
 
     steps:
       - checkout
 
-#      - run:
-#          name: Install Docker
-#          command: |
-#            sudo apt install docker-ce docker-ce-cli containerd.io
-
       - run:
           name: Build docker container
           command: |
-            docker build --tag=capstone-project .
+            docker build --tag=$DOCKER_IMAGE_NAME .
+            docker image ls
 
-#      - run:
-#          name: Push container to Dockerhub
-#          command: |
-
+      - run:
+          name: Upload Docker to Dockerhub
+          command: |
+            echo "Docker ID and Image: $DOCKER_IMAGE_NAME"
+            docker tag machine-learning-api $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest
+            docker push $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest
 
 
 workflows:
