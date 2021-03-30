@@ -43,8 +43,8 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
-            - hadolint
+            [ v1-dependencies-{{ checksum "requirements.txt" }},  hadolint]
+
       # run lint
       - run:
           name: run lint
