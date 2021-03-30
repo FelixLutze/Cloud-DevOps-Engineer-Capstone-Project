@@ -38,7 +38,7 @@ jobs:
 
   build-container:
     docker:
-      - image: docker
+      - image: cimg/base:2020.01
 
     working_directory: ~/repo
 
