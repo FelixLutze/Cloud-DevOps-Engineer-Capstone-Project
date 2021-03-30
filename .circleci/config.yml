@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   test-build:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: python:3.7.3-alpine
 
     working_directory: ~/repo
 
@@ -38,17 +38,17 @@ jobs:
 
   build-container:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: docker
 
     working_directory: ~/repo
 
     steps:
       - checkout
 
-      - run:
-          name: Install Docker
-          command: |
-            apk add --update docker-ce docker-ce-cli containerd.io
+#      - run:
+#          name: Install Docker
+#          command: |
+#            sudo apt install docker-ce docker-ce-cli containerd.io
 
       - run:
           name: Build docker container
