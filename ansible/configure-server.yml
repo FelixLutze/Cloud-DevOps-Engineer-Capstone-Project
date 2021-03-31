@@ -4,7 +4,6 @@
   user: ubuntu
   gather_facts: false
   become: yes
-
   pre_tasks:
     - name: Disable SWAP in fstab
       lineinfile:
@@ -20,6 +19,7 @@
   hosts: master
   user: ubuntu
   gather_facts: false
+  become: yes
   tasks:
     - name: "Install dependencies"
       apt:
@@ -30,21 +30,20 @@
     - name: "initialize the cluster"
       shell: sudo kubeadm init --pod-network-cidr=10.10.0.0/16
 
-    - name: create .kube directory
+    - name: "create .kube directory"
       file:
         path: $HOME/.kube
         state: directory
         mode: 0755
 
-    - name: copy admin.conf to user's kube config
+    - name: "copy admin.conf to user's kube config"
       copy:
         src: /etc/kubernetes/admin.conf
         dest: /root/.kube/config
         remote_src: yes
 
-    - name: install Pod network
-      become: yes
-      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml >> pod_network_setup.txt
+    - name: "install Pod network"
+      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
       args:
         chdir: $HOME
         creates: pod_network_setup.txt
@@ -65,7 +64,7 @@
         join_command: "{{ join_command_raw.stdout_lines[0] }}"
 
 - name: "Apply join command"
-- hosts: workers
+  hosts: workers
   become: yes
   tasks:
     - name: join cluster
