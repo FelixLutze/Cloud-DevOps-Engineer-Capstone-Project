@@ -54,6 +54,7 @@
   hosts: master
   user: ubuntu
   gather_facts: false
+  become: yes
   tasks:
     - name: get join command
       shell: kubeadm token create --print-join-command
