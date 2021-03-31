@@ -46,6 +46,7 @@ jobs:
           name: run lint
           command: |
             mv ~/hadolint ~/project/
+            cd ~/project
             . venv/bin/activate
             make lint
 
