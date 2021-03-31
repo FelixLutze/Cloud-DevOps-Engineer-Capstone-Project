@@ -90,6 +90,7 @@ jobs:
               --filters "Name=tag:Name,Values=capstone-prod" \
               --output text >> ~/inventory.txt
             cat ~/inventory.txt
+            cat ~/checkIfDeployed.txt
       - persist_to_workspace:
           root: ~/
           paths:
