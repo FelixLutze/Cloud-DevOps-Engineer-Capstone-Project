@@ -117,4 +117,4 @@ workflows:
       - upload-docker:
           requires:
             - lint
-      - deploy-test-env
+      - deploy-infrastructure
