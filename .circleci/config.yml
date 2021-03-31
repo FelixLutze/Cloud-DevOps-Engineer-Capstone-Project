@@ -110,8 +110,11 @@ jobs:
 workflows:
   default:
     jobs:
-      - test-build
+      - build
+      - lint:
+          requires:
+            - build
       - upload-docker:
           requires:
-            - test-build
+            - lint
       - deploy-test-env
