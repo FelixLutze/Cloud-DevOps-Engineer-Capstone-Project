@@ -16,13 +16,13 @@
       apt:
         update_cache: yes
 
-    - name: "Upgrade packages"
-      apt:
-        upgrade: yes
-
-    - name: "Remove dependencies that are no longer required"
-      apt:
-        autoremove: yes
+#    - name: "Upgrade packages"
+#      apt:
+#        upgrade: yes
+#
+#    - name: "Remove dependencies that are no longer required"
+#      apt:
+#        autoremove: yes
 
   roles:
     - install-docker
