@@ -114,7 +114,7 @@ jobs:
             if grep -q "No changes to deploy" ~/checkIfDeployed.txt
               then
                 cat ~/inventory.txt
-                echo "Our production environment already exists"
+                echo "Our production environment already exists."
               else
                 cat ~/inventory.txt
                 ansible-playbook -i ~/inventory.txt ~/project/ansible/configure-server.yml
