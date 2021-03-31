@@ -28,6 +28,8 @@ Resources:
       Tags:
         - Key: Name
           Value: capstone-k8-master
+        - Key: Project
+          Value: capstone-project
 
   k8-worker1:
     Type: AWS::EC2::Instance
@@ -39,7 +41,9 @@ Resources:
       ImageId: ami-0767046d1677be5a0
       Tags:
         - Key: Name
-          Value: capstone-k8-worker
+          Value: capstone-k8-worker1
+        - Key: Project
+          Value: capstone-project
 
   k8-worker2:
     Type: AWS::EC2::Instance
@@ -51,4 +55,6 @@ Resources:
       ImageId: ami-0767046d1677be5a0
       Tags:
         - Key: Name
-          Value: capstone-k8-worker
+          Value: capstone-k8-worker2
+        - Key: Project
+          Value: capstone-project

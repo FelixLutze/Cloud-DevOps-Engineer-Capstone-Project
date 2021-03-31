@@ -72,7 +72,7 @@ jobs:
           name: Ensure production infrastructure exists
           command: |
             aws cloudformation deploy \
-              --template-file cloudformation/production.yml \
+              --template-file cloudformation/production-stack.yml \
               --tags project=capstone-prod \
               --stack-name "capstone-prod" \
               --region ${AWS_DEFAULT_REGION} \
@@ -81,11 +81,26 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            echo [web] > ~/inventory.txt
+#           Get a list of all nodes
+            echo [all] > ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=capstone-prod" \
+              --filters "Name=tag:Project,Values=capstone-project" \
+              --output text >> ~/inventory.txt
+#            Get a list of all master nodes
+            echo [master] >> ~/inventory.txt
+            aws ec2 describe-instances \
+              --region "${AWS_DEFAULT_REGION}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Project,Values=capstone-k8-master" \
+              --output text >> ~/inventory.txt
+    #         Get a list of all master nodes
+            echo [worker] >> ~/inventory.txt
+            aws ec2 describe-instances \
+              --region "${AWS_DEFAULT_REGION}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Project,Values=capstone-k8-worker*" \
               --output text >> ~/inventory.txt
             cat ~/inventory.txt
       - persist_to_workspace:

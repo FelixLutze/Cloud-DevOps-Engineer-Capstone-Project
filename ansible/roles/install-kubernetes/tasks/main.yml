@@ -5,13 +5,9 @@
 - name: "Add the kubeadm repository"
   shell: echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
-- name: "Update packages"
+- name: "Install dependencies kubelet & kubeadm"
   apt:
-    update_cache: yes
-
-- name: "Install dependencies"
-  apt:
-    name: [ "kubelet", "kubeadm", "kubectl" ]
+    name: [ "kubelet", "kubeadm" ]
     state: latest
     update_cache: yes
 
@@ -23,12 +19,3 @@
 
 - name: "sudo sysctl -p"
   shell: sudo sysctl -p
-
-- name: "initialize the cluster"
-  shell: sudo kubeadm init --pod-network-cidr=10.244.0.0/16
-
-- name: "Configuration file for general usage"
-  shell: |
-    mkdir -p $HOME/.kube
-    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-    sudo chown $(id -u):$(id -g) $HOME/.kube/config

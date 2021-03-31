@@ -1,2 +1,3 @@
-[web]
-3.122.112.222
+[all]
+[master]
+[worker]

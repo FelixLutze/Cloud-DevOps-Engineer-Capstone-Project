@@ -1,29 +1,73 @@
 ---
-
-- name: "Configuration of production server"
-  hosts: web
+- name: "General configuration"
+  hosts: all
   user: ubuntu
   gather_facts: false
   become: yes
-  vars:
-    - ansible_python_interpreter: /usr/bin/python3
-    - ansible_host_key_checking: false
-    - ansible_stdout_callback: yaml
 
   pre_tasks:
-    #   Update server
-    - name: "Update packages"
-      apt:
-        update_cache: yes
-
-#    - name: "Upgrade packages"
-#      apt:
-#        upgrade: yes
-#
-#    - name: "Remove dependencies that are no longer required"
-#      apt:
-#        autoremove: yes
+    - name: Disable SWAP in fstab
+      lineinfile:
+        path: /etc/fstab
+        regexp: 'swap'
+        state: absent
 
   roles:
     - install-docker
     - install-kubernetes
+
+- name: "Configure k8 master"
+  hosts: master
+  user: ubuntu
+  gather_facts: false
+  tasks:
+    - name: "Install dependencies"
+      apt:
+        name: [ "kubectl" ]
+        state: latest
+        update_cache: yes
+
+    - name: "initialize the cluster"
+      shell: sudo kubeadm init --pod-network-cidr=10.10.0.0/16
+
+    - name: create .kube directory
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: copy admin.conf to user's kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /root/.kube/config
+        remote_src: yes
+
+    - name: install Pod network
+      become: yes
+      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml >> pod_network_setup.txt
+      args:
+        chdir: $HOME
+        creates: pod_network_setup.txt
+
+##  Configure k8 workers ##
+
+- name: "Store join command"
+  hosts: master
+  user: ubuntu
+  gather_facts: false
+  tasks:
+    - name: get join command
+      shell: kubeadm token create --print-join-command
+      register: join_command_raw
+    - name: set join command
+      set_fact:
+        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+- hosts: workers
+  become: yes
+  tasks:
+    - name: join cluster
+      shell: "{{ hostvars['master.example.com'].join_command }} --ignore-preflight-errors all  >> node_joined.txt"
+      args:
+        chdir: $HOME
+        creates: node_joined.txt
