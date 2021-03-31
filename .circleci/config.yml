@@ -21,7 +21,6 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             make install
-            mv hadolint ~/
 
       - save_cache:
           paths:
@@ -29,8 +28,9 @@ jobs:
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
       - persist_to_workspace:
-          root: ~/
+          root: ~/project/
           paths:
+            - venv/bin/activate
             - hadolint
 
   lint:
@@ -45,8 +45,6 @@ jobs:
       - run:
           name: run lint
           command: |
-            mv ~/hadolint ~/project/
-            cd ~/project
             . venv/bin/activate
             make lint
 
