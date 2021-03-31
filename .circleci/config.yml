@@ -77,7 +77,9 @@ jobs:
               --template-file cloudformation/production.yml \
               --tags project=capstone-prod \
               --stack-name "capstone-prod" \
-              --region ${AWS_DEFAULT_REGION}
+              --region ${AWS_DEFAULT_REGION} \
+              --output text >> ~/checkIfDeployed.txt
+            cat ~/checkIfDeployed.txt
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -85,12 +87,14 @@ jobs:
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=capstone-prod" --output text >> ~/inventory.txt
+              --filters "Name=tag:Name,Values=capstone-prod" \
+              --output text >> ~/inventory.txt
             cat ~/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - inventory.txt
+            - checkIfDeployed.txt
 
 workflows:
   default:
