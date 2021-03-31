@@ -96,6 +96,39 @@ jobs:
             - inventory.txt
             - checkIfDeployed.txt
 
+  configure-infrastructure:
+    docker:
+      # Docker image here that supports Ansible
+      - image: python:3.7-alpine3.11
+    steps:
+      # Checkout code from git
+      - checkout
+      # Add ssh keys with fingerprint
+      - add_ssh_keys:
+          fingerprints:
+            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+      - run:
+          name: Configure server
+          command: |
+            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
+                        then
+                          cat ~/inventory.txt
+                          echo "Our production environment already exists"
+                        else
+                          cat ~/inventory.txt
+                          ansible-playbook -i ~/inventory.txt ~/project/ansible/configure-server.yml
+                        fi
+      # Here's where you will add some code to rollback on failure
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+
+
 workflows:
   default:
     jobs:
