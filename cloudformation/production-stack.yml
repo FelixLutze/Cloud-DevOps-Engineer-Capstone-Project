@@ -17,7 +17,7 @@ Resources:
           ToPort: 80
           CidrIp: 0.0.0.0/0
 
-  k8-master:
+  k8master:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.medium
@@ -31,7 +31,7 @@ Resources:
         - Key: Project
           Value: capstone-project
 
-  k8-worker1:
+  k8worker1:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.medium
@@ -45,7 +45,7 @@ Resources:
         - Key: Project
           Value: capstone-project
 
-  k8-worker2:
+  k8worker2:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.medium
