@@ -16,4 +16,4 @@
     - update-server
     - install-docker
     - install-k8
-    - configure-k8
+#    - configure-k8
