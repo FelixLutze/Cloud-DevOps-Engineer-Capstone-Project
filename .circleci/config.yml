@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  test-build:
+  build:
     docker:
       - image: python:3.7.3-stretch
 
@@ -22,17 +22,32 @@ jobs:
             . venv/bin/activate
             make install
 
-      # run lint
-      - run:
-          name: run lint
-          command: |
-            . venv/bin/activate
-            make lint
-
       - save_cache:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - hadolint
+
+  lint:
+    docker:
+      - image: python:3.7.3-stretch
+
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+      # run lint
+      - run:
+          name: run lint
+          command: |
+            mv ~/hadolint ~/project/
+            . venv/bin/activate
+            make lint
+
 
   upload-docker:
     docker:
@@ -60,6 +75,38 @@ jobs:
             docker tag $DOCKER_IMAGE_NAME $DOCKERHUB_USERNAME/$DOCKER_IMAGE_NAME:latest
             docker push $DOCKERHUB_USERNAME/$DOCKER_IMAGE_NAME:latest
 
+  deploy-infrastructure:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Install dependencies
+          command: yum install -y tar gzip
+      - run:
+          name: Ensure production infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudformation/production.yml \
+              --tags project=capstone-prod \
+              --stack-name "capstone-prod" \
+              --region ${AWS_DEFAULT_REGION}
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            echo [web] > ~/inventory.txt
+            aws ec2 describe-instances \
+              --region "${AWS_DEFAULT_REGION}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Name,Values=capstone-prod" --output text >> ~/inventory.txt
+            cat ~/inventory.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - inventory.txt
+
 workflows:
   default:
     jobs:
@@ -67,3 +114,4 @@ workflows:
       - upload-docker:
           requires:
             - test-build
+      - deploy-test-env
