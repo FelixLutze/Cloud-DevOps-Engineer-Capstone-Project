@@ -117,4 +117,7 @@ workflows:
       - upload-docker:
           requires:
             - lint
+          filters:
+            branches:
+              only: [ master ]
       - deploy-infrastructure
