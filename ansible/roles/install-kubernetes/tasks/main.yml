@@ -1,15 +1,9 @@
 ---
-- name: "Download minikube"
-  shell: curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+- name: "Add the GPG key for kubeadm"
+  shell: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
-- name: "Install minikube"
-  shell: install minikube-linux-amd64 /usr/local/bin/minikube
-
-- name: "Add the GPG key for kubectl"
-  shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-
-- name: "Add the kubectl repository"
-  shell: echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+- name: "Add the kubeadm repository"
+  shell: echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 - name: "Update packages"
   apt:
@@ -17,15 +11,18 @@
 
 - name: "Install dependencies"
   apt:
-    name: [ "kubectl", "kubeadm" ]
+    name: [ "kubelet", "kubeadm", "kubectl" ]
     state: latest
     update_cache: yes
 
-- name: "Start Minikube"
-  become: false
-  shell: minikube start
+- name: "Add the kubeadm repository"
+  shell: sudo apt-mark hold kubelet kubeadm kubectl
 
-- name: "Cleanup files"
-  file:
-    path: /home/ubuntu/minikube-linux-amd64
-    state: absent
+- name: "enable the use of iptables"
+  shell: echo "net.bridge.bridge-nf-call-iptables=1" | sudo tee -a /etc/sysctl.conf
+
+- name: "sudo sysctl -p"
+  shell: sudo sysctl -p
+
+- name: "initialize the cluster"
+  shell: sudo kubeadm init --pod-network-cidr=10.244.0.0/16
