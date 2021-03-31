@@ -1,0 +1,33 @@
+---
+- name: "Download minikube"
+  shell: curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+- name: "Install minikube"
+  shell: install minikube-linux-amd64 /usr/local/bin/minikube
+
+- name: "Add current user to the kubernetes group"
+  user:
+    name: ubuntu
+    shell: /bin/bash
+    groups: docker
+    append: yes
+
+- name: "Add the GPG key for kubectl"
+  shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+- name: "Add the kubectl repository"
+  shell: echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+
+- name: "Update packages"
+  apt:
+    update_cache: yes
+
+- name: "Install dependencies"
+  apt:
+    name: [ "kubectl", "kubeadm" ]
+    state: latest
+    update_cache: yes
+
+- name: "Start Minikube"
+  become: false
+  shell: minikube start
