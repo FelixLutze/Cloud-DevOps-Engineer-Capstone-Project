@@ -8,7 +8,7 @@
 - name: "Install from the Docker repo instead of the default Ubuntu repo"
   shell: apt-cache policy docker-ce
 
-- name: "Install dependencies"
+- name: "Install dependencies for Docker"
   apt:
     name: [ "apt-transport-https", "ca-certificates", "curl", "software-properties-common", "gzip" , "docker-ce" ]
     state: latest
