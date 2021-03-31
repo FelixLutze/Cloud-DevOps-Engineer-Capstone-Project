@@ -85,7 +85,7 @@ jobs:
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Project=tag:Project,Values=capstone-project" \
+              --filters "Name=tag:Project,Values=capstone-project" \
               --output text >> ~/inventory.txt
             echo [master] >> ~/inventory.txt
             aws ec2 describe-instances \
