@@ -1,9 +1,9 @@
 ---
 - name: "Add the GPG key for kubeadm"
-  shell: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  shell: curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
 - name: "Add the kubeadm repository"
-  shell: echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+  shell: echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
 
 - name: "Install dependencies kubelet & kubeadm"
   apt:
@@ -12,10 +12,10 @@
     update_cache: yes
 
 - name: "Add the kubeadm repository"
-  shell: sudo apt-mark hold kubelet kubeadm kubectl
+  shell: apt-mark hold kubelet kubeadm kubectl
 
 - name: "enable the use of iptables"
-  shell: echo "net.bridge.bridge-nf-call-iptables=1" | sudo tee -a /etc/sysctl.conf
+  shell: echo "net.bridge.bridge-nf-call-iptables=1" | tee -a /etc/sysctl.conf
 
 - name: "sudo sysctl -p"
-  shell: sudo sysctl -p
+  shell: sysctl -p

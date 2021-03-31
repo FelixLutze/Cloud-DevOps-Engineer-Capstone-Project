@@ -123,14 +123,15 @@ jobs:
       - run:
           name: Configure server
           command: |
-            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
-              then
+#            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
+#              then
                 cat ~/inventory.txt
                 echo "Our production environment already exists."
-              else
+#              else
                 cat ~/inventory.txt
-                ansible-playbook -i ~/inventory.txt ~/project/ansible/configure-server.yml
-              fi
+                cd ansible
+                ansible-playbook -i inventory.txt configure-server.yml
+#              fi
 
 workflows:
   default:
