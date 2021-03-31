@@ -17,3 +17,10 @@
     name: [ "apt-transport-https", "ca-certificates", "curl", "software-properties-common", "gzip" , "docker-ce" ]
     state: latest
     update_cache: yes
+
+- name: "Add current user to the docker group"
+  user:
+    name: ubuntu
+    shell: /bin/bash
+    groups: docker
+    append: yes
