@@ -31,3 +31,8 @@
 - name: "Start Minikube"
   become: false
   shell: minikube start
+
+- name: "Cleanup files"
+  file:
+    path: ~/minikube-linux-amd64
+    state: absent
