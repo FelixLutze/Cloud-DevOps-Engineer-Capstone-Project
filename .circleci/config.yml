@@ -130,7 +130,7 @@ jobs:
               else
                 cat ~/inventory.txt
                 cd ansible
-                ansible-playbook -i inventory.txt configure-server.yml
+                ansible-playbook -i ~/inventory.txt configure-server.yml
               fi
 
 workflows:
