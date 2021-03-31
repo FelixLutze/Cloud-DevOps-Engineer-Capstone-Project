@@ -81,21 +81,18 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-#           Get a list of all nodes
             echo [all] > ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Project,Values=capstone-project" \
               --output text >> ~/inventory.txt
-#            Get a list of all master nodes
             echo [master] >> ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Project,Values=capstone-k8-master" \
               --output text >> ~/inventory.txt
-    #         Get a list of all master nodes
             echo [worker] >> ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
