@@ -85,19 +85,19 @@ jobs:
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Project,Values=capstone-project" \
+              --filters "Project=tag:Project,Values=capstone-project" \
               --output text >> ~/inventory.txt
             echo [master] >> ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Project,Values=capstone-k8-master" \
+              --filters "Name=tag:Name,Values=capstone-k8-master" \
               --output text >> ~/inventory.txt
             echo [worker] >> ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Project,Values=capstone-k8-worker*" \
+              --filters "Name=tag:Name,Values=capstone-k8-worker*" \
               --output text >> ~/inventory.txt
             cat ~/inventory.txt
       - persist_to_workspace:
