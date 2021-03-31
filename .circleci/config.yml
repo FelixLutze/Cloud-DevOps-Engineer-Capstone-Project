@@ -27,11 +27,10 @@ jobs:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
-      - persist_to_workspace:
-          root: ~/project/
+      - save_cache:
           paths:
-            - venv/bin/activate
             - hadolint
+          key: hadolint
 
   lint:
     docker:
@@ -39,8 +38,14 @@ jobs:
 
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+            - hadolint
+
       # run lint
       - run:
           name: run lint
