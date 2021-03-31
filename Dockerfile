@@ -2,7 +2,7 @@ FROM python:3.7.3-stretch
 
 WORKDIR /app
 
-COPY . app.py /app/
+COPY ./app/app.py /app/
 
 # hadolint ignore=DL3013
 RUN pip install --upgrade pip &&\
