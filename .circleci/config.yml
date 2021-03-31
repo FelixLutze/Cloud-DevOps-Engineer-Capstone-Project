@@ -36,7 +36,7 @@ jobs:
 
   upload-docker:
     docker:
-      - image: circleci/golang:1.15
+      - image: python:3.7.3-stretch
 
     working_directory: ~/repo
 
@@ -96,7 +96,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7.3-stretch
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
