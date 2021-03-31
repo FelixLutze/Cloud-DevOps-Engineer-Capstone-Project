@@ -17,7 +17,7 @@ Resources:
           ToPort: 80
           CidrIp: 0.0.0.0/0
 
-  EC2Instance:
+  k8-master:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.medium
@@ -27,4 +27,28 @@ Resources:
       ImageId: ami-0767046d1677be5a0
       Tags:
         - Key: Name
-          Value: capstone-prod
+          Value: capstone-k8-master
+
+  k8-worker1:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.medium
+      SecurityGroups:
+        - Ref: InstanceSecurityGroup
+      KeyName: udacity
+      ImageId: ami-0767046d1677be5a0
+      Tags:
+        - Key: Name
+          Value: capstone-k8-worker
+
+  k8-worker2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.medium
+      SecurityGroups:
+        - Ref: InstanceSecurityGroup
+      KeyName: udacity
+      ImageId: ami-0767046d1677be5a0
+      Tags:
+        - Key: Name
+          Value: capstone-k8-worker
