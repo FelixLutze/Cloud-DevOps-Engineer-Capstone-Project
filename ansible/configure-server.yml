@@ -11,7 +11,7 @@
     - ansible_stdout_callback: yaml
 
   pre_tasks:
-#   Update server
+    #   Update server
     - name: "Update packages"
       apt:
         update_cache: yes
@@ -27,57 +27,3 @@
   roles:
     - install-docker
     - install-kubernetes
-#
-#   Install Docker
-#    - name: "GPG key for the official Docker repository"
-#      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-#
-#    - name: "Docker repository to APT sources"
-#      shell: sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-#
-#    - name: "Update packages"
-#      apt:
-#        update_cache: yes
-#
-#    - name: "Install from the Docker repo instead of the default Ubuntu repo"
-#      shell: apt-cache policy docker-ce
-#
-#    - name: "Install dependencies"
-#      apt:
-#        name: [ "apt-transport-https", "ca-certificates", "curl", "software-properties-common", "gzip" , "docker-ce" ]
-#        state: latest
-#        update_cache: yes
-
-#   Install Kubernetes
-#    - name: "Download minikube"
-#      shell: curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-#
-#    - name: "Install minikube"
-#      shell: install minikube-linux-amd64 /usr/local/bin/minikube
-#
-#    - name: "Add current user to the kubernetes group"
-#      user:
-#        name: ubuntu
-#        shell: /bin/bash
-#        groups: docker
-#        append: yes
-#
-#    - name: "Add the GPG key for kubectl"
-#      shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-#
-#    - name: "Add the kubectl repository"
-#      shell: echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
-#
-#    - name: "Update packages"
-#      apt:
-#        update_cache: yes
-#
-#    - name: "Install dependencies"
-#      apt:
-#        name: [ "kubectl", "kubeadm" ]
-#        state: latest
-#        update_cache: yes
-#
-#    - name: "Start Minikube"
-#      become: false
-#      shell: minikube start
