@@ -17,5 +17,5 @@
 - name: "enable the use of iptables"
   shell: echo "net.bridge.bridge-nf-call-iptables=1" | tee -a /etc/sysctl.conf
 
-- name: "sudo sysctl -p"
+- name: "sysctl -p"
   shell: sysctl -p

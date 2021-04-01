@@ -1,9 +1,9 @@
 ---
 - name: "GPG key for the official Docker repository"
-  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 
 - name: "Docker repository to APT sources"
-  shell: sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+  shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
 
 - name: "Install from the Docker repo instead of the default Ubuntu repo"
   shell: apt-cache policy docker-ce
