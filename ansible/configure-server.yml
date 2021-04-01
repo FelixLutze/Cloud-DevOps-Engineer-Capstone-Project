@@ -25,15 +25,15 @@
       shell: kubeadm init --pod-network-cidr=10.244.0.0/16
 
     - name: "create .kube directory"
-      shell: mkdir -p $HOME/.kube
+      shell: mkdir -p /home/ubuntu/.kube
 
-    - name: "cp -i /etc/kubernetes/admin.conf $HOME/.kube/config"
+    - name: "cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config"
       become: yes
-      shell: cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+      shell: cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
 
-    - name: "chown $(id -u):$(id -g) $HOME/.kube/config"
+    - name: "chown ubuntu:ubuntu /home/ubuntu/.kube/config"
       become: yes
-      shell: chown $(id -u):$(id -g) $HOME/.kube/config
+      shell: chown ubuntu:ubuntu /home/ubuntu/.kube/config
 
     - name: "Apply a Flannel networking plugin"
       shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
