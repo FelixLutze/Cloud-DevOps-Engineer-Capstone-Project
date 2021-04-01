@@ -58,7 +58,9 @@
         join_command: "{{ join_command_raw.stdout_lines[0] }}"
 
 - name: "Apply join command"
-  hosts: workers
+  hosts: worker
+  user: ubuntu
+  gather_facts: false
   become: yes
   tasks:
     - name: join cluster
