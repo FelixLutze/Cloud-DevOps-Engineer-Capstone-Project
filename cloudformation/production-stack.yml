@@ -19,7 +19,8 @@ Resources:
         - IpProtocol: tcp
           FromPort: 6443
           ToPort: 6443
-          CidrIp: { "Fn::GetAtt" : [ "Default", "CidrBlock" ] }
+          #CidrIp: { "Fn::GetAtt" : [ "Default", "CidrBlock" ] }
+          CidrIp: 172.31.0.0/16
 
   k8master:
     Type: AWS::EC2::Instance
