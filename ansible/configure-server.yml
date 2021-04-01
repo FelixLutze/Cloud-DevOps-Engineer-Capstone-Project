@@ -19,24 +19,30 @@
   hosts: master
   user: ubuntu
   gather_facts: false
-  become: yes
   tasks:
     - name: "Install dependencies"
+      become: yes
       apt:
         name: [ "kubectl" ]
         state: latest
         update_cache: yes
 
     - name: "initialize the cluster"
-      shell: kubeadm init --pod-network-cidr=172.16.0.0/16
+      become: yes
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16
 
     - name: "create .kube directory"
-      file:
-        path: $HOME/.kube
-        state: directory
-        mode: 0755
+      shell: mkdir -p $HOME/.kube
 
-    - name: "install Pod network"
+    - name: "cp -i /etc/kubernetes/admin.conf $HOME/.kube/config"
+      become: yes
+      shell: cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+    - name: "chown $(id -u):$(id -g) $HOME/.kube/config"
+      become: yes
+      shell: chown $(id -u):$(id -g) $HOME/.kube/config
+
+    - name: "Apply a Flannel networking plugin"
       shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
       args:
         chdir: $HOME
