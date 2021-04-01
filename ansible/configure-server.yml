@@ -20,13 +20,6 @@
   user: ubuntu
   gather_facts: false
   tasks:
-    - name: "Install dependencies"
-      become: yes
-      apt:
-        name: [ "kubectl" ]
-        state: latest
-        update_cache: yes
-
     - name: "initialize the cluster"
       become: yes
       shell: kubeadm init --pod-network-cidr=10.244.0.0/16

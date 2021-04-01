@@ -7,7 +7,7 @@
 
 - name: "Install dependencies kubelet & kubeadm"
   apt:
-    name: [ "kubelet", "kubeadm" ]
+    name: [ "kubelet", "kubeadm" , "kubectl"]
     state: latest
     update_cache: yes
 
