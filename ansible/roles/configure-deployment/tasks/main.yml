@@ -1,9 +1,9 @@
-- name: "add node exporter configuration."
+- name: "Copy deployment configuration"
   copy:
     src: capstone-deployment.yaml
     dest: ~/
 
-- name: "Rollout docker image update"
+- name: "Apply deployment configuration"
   command: kubectl apply -f capstone-deployment.yaml
   args:
     chdir: ~/
