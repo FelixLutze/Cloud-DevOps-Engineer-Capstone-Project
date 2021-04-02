@@ -133,6 +133,44 @@ jobs:
                 ansible-playbook -i ~/inventory.txt configure-server.yml
               fi
 
+  deploy-docker:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+      - run:
+          name: Deploy newest Docker Image
+          command: |
+            exit 0
+
+  smoke-test:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+      - run:
+          name: Test website
+          command: |
+            exit 0
+
 workflows:
   default:
     jobs:
