@@ -65,3 +65,11 @@
   tasks:
     - name: join cluster
       shell: "{{ [hostvars[groups['master'][0]]['join_command']][0] }} --ignore-preflight-errors all"
+
+- name: "Add deployment configuration on master"
+  hosts: master
+  user: ubuntu
+  gather_facts: false
+
+  roles:
+    - deploy-docker
