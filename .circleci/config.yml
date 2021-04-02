@@ -185,6 +185,9 @@ workflows:
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
+      - deploy-docker:
+          requires:
+            - configure-infrastructure
       - smoke-test:
           requires:
             - deploy-docker
