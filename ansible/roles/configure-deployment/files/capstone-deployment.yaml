@@ -15,7 +15,7 @@ spec:
         app: capstone-app
     spec:
       containers:
-        - name: capstone-container
+        - name: capstone-app
           image: felixlutze/capstone-project
           ports:
             - containerPort: 80

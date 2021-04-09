@@ -1,9 +1,9 @@
 - name: "Copy deployment configuration"
   copy:
     src: capstone-deployment.yaml
-    dest: ~/
+    dest: $HOME
 
 - name: "Apply deployment configuration"
   command: kubectl apply -f capstone-deployment.yaml
   args:
-    chdir: ~/
+    chdir: $HOME

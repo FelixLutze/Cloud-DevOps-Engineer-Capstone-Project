@@ -1,0 +1,9 @@
+---
+- name: "Install dependencies"
+  hosts: management
+  user: ubuntu
+  gather_facts: false
+  become: yes
+
+  roles:
+    - capstone-deployment
