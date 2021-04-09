@@ -69,35 +69,54 @@ jobs:
           name: Install dependencies
           command: yum install -y tar gzip
       - run:
-          name: Ensure production infrastructure exists
+          name: Ensure EKS network exists
           command: |
             aws cloudformation deploy \
-              --template-file cloudformation/production-stack.yml \
-              --tags project=capstone-prod \
-              --stack-name "capstone-prod" \
+              --template-file cloudformation/network.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-eks-network" \
               --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudformation/network-parameters.json
+      - run:
+          name: Ensure EKS Cluster exists
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudformation/cluster.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-eks-cluster" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudformation/cluster-parameters.json \
+              --capabilities CAPABILITY_NAMED_IAM
+      - run:
+          name: Ensure Nodegroup exists
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudformation/nodegroup.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-eks-nodegroup" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudformation/nodegroup-parameters.json \
+              --capabilities CAPABILITY_NAMED_IAM
+          no_output_timeout: 15m
+      - run:
+          name: Ensure management instances exists
+          command: |
+            aws cloudformation deploy \
+              --template-file cloudformation/management.yml \
+              --tags project=${ENVIRONMENT_NAME}-project \
+              --stack-name "${ENVIRONMENT_NAME}-eks-management" \
+              --region ${AWS_DEFAULT_REGION} \
+              --parameter-overrides file://cloudformation/management-parameters.json \
               --output text >> ~/checkIfDeployed.txt
             cat ~/checkIfDeployed.txt
       - run:
-          name: Add back-end ip to ansible inventory
+          name: Extract the IPs of the management instances for Ansible
           command: |
-            echo [all] > ~/inventory.txt
+            echo [management] > ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Project,Values=capstone-project" \
-              --output text >> ~/inventory.txt
-            echo [master] >> ~/inventory.txt
-            aws ec2 describe-instances \
-              --region "${AWS_DEFAULT_REGION}" \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=capstone-k8-master" \
-              --output text >> ~/inventory.txt
-            echo [worker] >> ~/inventory.txt
-            aws ec2 describe-instances \
-              --region "${AWS_DEFAULT_REGION}" \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=capstone-k8-worker*" \
+              --filters "Name=tag:Project,Values=${ENVIRONMENT_NAME}-management*" \
               --output text >> ~/inventory.txt
             cat ~/inventory.txt
       - persist_to_workspace:
@@ -126,50 +145,50 @@ jobs:
             if grep -q "No changes to deploy" ~/checkIfDeployed.txt
               then
                 cat ~/inventory.txt
-                echo "Our production environment already exists."
+                echo "Our management instances are already configured."
               else
                 cat ~/inventory.txt
                 cd ansible
                 ansible-playbook -i ~/inventory.txt configure-server.yml
               fi
 
-  deploy-docker:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible
-      - run:
-          name: Deploy newest Docker Image
-          command: |
-            exit 0
-
-  smoke-test:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible
-      - run:
-          name: Test website
-          command: |
-            exit 0
+#  deploy-docker:
+#    docker:
+#      - image: python:3.7-alpine3.11
+#    steps:
+#      - checkout
+#      - add_ssh_keys:
+#          fingerprints:
+#            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
+#      - attach_workspace:
+#          at: ~/
+#      - run:
+#          name: Install dependencies
+#          command: |
+#            apk add --update ansible
+#      - run:
+#          name: Deploy newest Docker Image
+#          command: |
+#            exit 0
+#
+#  smoke-test:
+#    docker:
+#      - image: python:3.7-alpine3.11
+#    steps:
+#      - checkout
+#      - add_ssh_keys:
+#          fingerprints:
+#            - "d4:2f:91:66:b5:0d:84:24:4a:09:2c:d6:8a:c1:0f:91"
+#      - attach_workspace:
+#          at: ~/
+#      - run:
+#          name: Install dependencies
+#          command: |
+#            apk add --update ansible
+#      - run:
+#          name: Test website
+#          command: |
+#            exit 0
 
 workflows:
   default:
@@ -185,9 +204,9 @@ workflows:
       - configure-infrastructure:
           requires:
             - deploy-infrastructure
-      - deploy-docker:
-          requires:
-            - configure-infrastructure
-      - smoke-test:
-          requires:
-            - deploy-docker
+#      - deploy-docker:
+#          requires:
+#            - configure-infrastructure
+#      - smoke-test:
+#          requires:
+#            - deploy-docker

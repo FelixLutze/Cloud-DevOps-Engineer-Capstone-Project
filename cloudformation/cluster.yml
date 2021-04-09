@@ -1,0 +1,63 @@
+Description: >
+  Felix Lutze / Capstone Project
+  Creates an Amazon EKS Cluster
+Parameters:
+  EnvironmentName:
+    Description: An Environment name that will be prefixed to resources
+    Default: capstone-project
+    Type: String
+
+Resources:
+  ClusterInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub ${EnvironmentName}-cluster-profile
+      Path: "/"
+      Roles:
+        - !Ref EKSClusterRole
+
+  EKSClusterRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-cluster-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - eks.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+        - arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess
+
+  CapstoneProjectCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Version: "1.19"
+      Name: !Sub ${EnvironmentName}-cluster
+      RoleArn: !GetAtt EKSClusterRole.Arn
+      ResourcesVpcConfig:
+        SecurityGroupIds:
+          - Fn::ImportValue: !Sub ${EnvironmentName}-SCG
+        SubnetIds:
+          Fn::Split:
+            - ","
+            - Fn::ImportValue:
+                Fn::Sub: ${EnvironmentName}-PUB-NETS
+Outputs:
+  EksId:
+    Description: EKS id
+    Value: !Ref CapstoneProjectCluster
+    Export:
+      Name: !Sub ${EnvironmentName}-EKSCluster
+
+  EKSRoleArn:
+    Description: Role for accessing and creating aws resources
+    Value: !GetAtt EKSClusterRole.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-EKSRole

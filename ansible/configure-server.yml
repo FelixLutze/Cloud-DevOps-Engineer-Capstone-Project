@@ -1,75 +1,98 @@
 ---
-- name: "General configuration"
-  hosts: all
+- name: "Install dependencies"
+  hosts: management
   user: ubuntu
   gather_facts: false
   become: yes
+
+  roles:
+    - install-awscli
+    - install-kubectl
+
+- name: "Authenticate AWS CLI with AWS"
+  hosts: management
+  user: ubuntu
+  gather_facts: false
+  become: yes
+  vars:
+    AWS_ACCESS_KEY_ID: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+    AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+    AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
+  tasks:
+    - name: Set the aws_access_key_id
+      shell: "aws configure set aws_access_key_id {{ AWS_ACCESS_KEY_ID }}"
+    - name: Set the aws_secret_access_key
+      shell: "aws configure set aws_secret_access_key {{ AWS_SECRET_ACCESS_KEY }}"
+    - name: Set the default.region
+      shell: "aws configure set aws_access_key_id {{ AWS_DEFAULT_REGION }}"
+
+- name: "Configure EKS"
+  hosts: management
+  user: ubuntu
+  gather_facts: false
+  become: yes
+  vars:
+    AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
+    ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   pre_tasks:
-    - name: Disable SWAP in fstab
-      lineinfile:
-        path: /etc/fstab
-        regexp: 'swap'
-        state: absent
+    - name: Create a kubeconfig file for the cluster
+      shell: "aws eks update-kubeconfig --region {{ AWS_DEFAULT_REGION }} --name {{ ENVIRONMENT_NAME }}-cluster"
 
-  roles:
-    - install-docker
-    - install-kubernetes
-
-- name: "Configure k8 master"
-  hosts: master
-  user: ubuntu
-  gather_facts: false
-  tasks:
-    - name: "initialize the cluster"
-      become: yes
-      shell: kubeadm init --pod-network-cidr=10.244.0.0/16
-
-    - name: "create .kube directory"
-      shell: mkdir -p /home/ubuntu/.kube
-
-    - name: "cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config"
-      become: yes
-      shell: cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
-
-    - name: "chown ubuntu:ubuntu /home/ubuntu/.kube/config"
-      become: yes
-      shell: chown ubuntu:ubuntu /home/ubuntu/.kube/config
-
-    - name: "Apply a Flannel networking plugin"
-      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
-      args:
-        chdir: $HOME
-        creates: pod_network_setup.txt
-
-##  Configure k8 workers ##
-
-- name: "Store join command"
-  hosts: master
-  user: ubuntu
-  gather_facts: false
-  become: yes
-  tasks:
-    - name: get join command
-      shell: kubeadm token create --print-join-command
-      register: join_command_raw
-
-    - name: set join command
-      set_fact:
-        join_command: "{{ join_command_raw.stdout }}"
-
-- name: "Apply join command"
-  hosts: worker
-  user: ubuntu
-  gather_facts: false
-  become: yes
-  tasks:
-    - name: join cluster
-      shell: "{{ [hostvars[groups['master'][0]]['join_command']][0] }} --ignore-preflight-errors all"
-
-- name: "Add deployment configuration on master"
-  hosts: master
-  user: ubuntu
-  gather_facts: false
-
-  roles:
-    - configure-deployment
+#- name: "Configure k8 master"
+#  hosts: master
+#  user: ubuntu
+#  gather_facts: false
+#  tasks:
+#    - name: "initialize the cluster"
+#      become: yes
+#      shell: kubeadm init --pod-network-cidr=10.244.0.0/16
+#
+#    - name: "create .kube directory"
+#      shell: mkdir -p /home/ubuntu/.kube
+#
+#    - name: "cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config"
+#      become: yes
+#      shell: cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
+#
+#    - name: "chown ubuntu:ubuntu /home/ubuntu/.kube/config"
+#      become: yes
+#      shell: chown ubuntu:ubuntu /home/ubuntu/.kube/config
+#
+#    - name: "Apply a Flannel networking plugin"
+#      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
+#      args:
+#        chdir: $HOME
+#        creates: pod_network_setup.txt
+#
+###  Configure k8 workers ##
+#
+#- name: "Store join command"
+#  hosts: master
+#  user: ubuntu
+#  gather_facts: false
+#  become: yes
+#  tasks:
+#    - name: get join command
+#      shell: kubeadm token create --print-join-command
+#      register: join_command_raw
+#
+#    - name: set join command
+#      set_fact:
+#        join_command: "{{ join_command_raw.stdout }}"
+#
+#- name: "Apply join command"
+#  hosts: worker
+#  user: ubuntu
+#  gather_facts: false
+#  become: yes
+#  tasks:
+#    - name: join cluster
+#      shell: "{{ [hostvars[groups['master'][0]]['join_command']][0] }} --ignore-preflight-errors all"
+#
+#- name: "Add deployment configuration on master"
+#  hosts: master
+#  user: ubuntu
+#  gather_facts: false
+#
+#  roles:
+#    - configure-deployment
