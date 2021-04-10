@@ -178,6 +178,18 @@ jobs:
                 cd ansible
                 ansible-playbook -i ~/inventory.txt configure-cluster.yml
               fi
+      - run:
+          name: Wait for LoadBalancer domain to become reachable
+          command: |
+            if grep -q "No changes to deploy" ~/checkIfDeployed.txt
+              then
+                cat ~/inventory.txt
+                echo "Our management instances are already configured."
+              else
+                cat ~/inventory.txt
+                echo "Wait 90 seconds..."
+                sleep 90
+              fi
 
 #  deploy-docker:
 #    docker:
