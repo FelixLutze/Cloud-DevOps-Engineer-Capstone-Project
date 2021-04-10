@@ -1,0 +1,10 @@
+- name: "Deploy latest app"
+  hosts: management[0]
+  user: ubuntu
+  gather_facts: false
+  become: yes
+  vars:
+    ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
+  tasks:
+    - name: Set the aws_access_key_id
+      shell: "kubectl set image deployment.v1.apps/{{ ENVIRONMENT_NAME }}-deployment {{ ENVIRONMENT_NAME }}-app=felixlutze/{{ ENVIRONMENT_NAME }} --record=true"
