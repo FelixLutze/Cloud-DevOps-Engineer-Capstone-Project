@@ -5,8 +5,9 @@
   become: yes
   vars:
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
+    CIRCLE_BUILD_NUM: "{{ lookup('env', 'CIRCLE_BUILD_NUM') }}"
   tasks:
     - name: Update the deployment to run the latest version
-      shell: "./bin/kubectl set image deployment.v1.apps/{{ ENVIRONMENT_NAME }}-deployment {{ ENVIRONMENT_NAME }}-app=felixlutze/{{ ENVIRONMENT_NAME }} --record=true"
+      shell: "./bin/kubectl set image deployment.v1.apps/{{ ENVIRONMENT_NAME }}-deployment {{ ENVIRONMENT_NAME }}-app=felixlutze/{{ ENVIRONMENT_NAME }}:{{ CIRCLE_BUILD_NUM }} --record=true"
       args:
         chdir: $HOME
