@@ -38,9 +38,9 @@ I used CircleCi to create a CI/CD Pipeline to test and deploy changes manually b
 
 ![CircleCi Pipeline](./screenshots/circleci_pipeline.PNG)
 
-## Linting using Pylint
+## Linting using Pylint and Hadolint
 
-Linting is used to check if the Application is syntactically correct.
+Linting is used to check if the Application and Dockerfile is syntactically correct.
 This process makes sure that the code quality is always as good as possible.
 
 #### This is the output when the step fails:
