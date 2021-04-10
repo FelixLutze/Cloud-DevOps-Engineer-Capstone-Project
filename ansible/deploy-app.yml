@@ -7,7 +7,7 @@
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
     CIRCLE_BUILD_NUM: "{{ lookup('env', 'CIRCLE_BUILD_NUM') }}"
   tasks:
-    - name: Update the deployment to run the latest version
+    - name: Update the deployment to run the latest Build
       shell: "./bin/kubectl set image deployments/{{ ENVIRONMENT_NAME }}-deployment {{ ENVIRONMENT_NAME }}-app=felixlutze/{{ ENVIRONMENT_NAME }}:{{ CIRCLE_BUILD_NUM }}"
       args:
         chdir: $HOME
