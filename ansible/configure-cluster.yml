@@ -1,9 +1,10 @@
 ---
-- name: "Install dependencies"
-  hosts: management
+- name: "Configure the EKS cluster with kubectl"
+  hosts: management[0]
   user: ubuntu
   gather_facts: false
   become: yes
 
   roles:
     - capstone-deployment
+    - capstone-service
