@@ -110,13 +110,13 @@ jobs:
               --output text >> ~/checkIfDeployed.txt
             cat ~/checkIfDeployed.txt
       - run:
-          name: Extract the IPs of the management instances for Ansible
+          name: Extract the IPs of the management instance for Ansible
           command: |
             echo [management] > ~/inventory.txt
             aws ec2 describe-instances \
               --region "${AWS_DEFAULT_REGION}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Project,Values=${ENVIRONMENT_NAME}-management*" \
+              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-management*" \
               --output text >> ~/inventory.txt
             cat ~/inventory.txt
       - persist_to_workspace:
