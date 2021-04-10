@@ -49,7 +49,7 @@ jobs:
       - run:
           name: Build docker container
           command: |
-            docker build --tag=latest .
+            docker build --tag=$DOCKER_IMAGE_NAME .
             docker image ls
 
       - run:
