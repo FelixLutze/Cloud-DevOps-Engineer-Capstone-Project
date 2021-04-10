@@ -1,0 +1,20 @@
+---
+- name: "Save LoadBalancer's DNS name locally"
+  hosts: management[0]
+  user: ubuntu
+  gather_facts: false
+  become: yes
+  vars:
+    ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
+  tasks:
+    - name: Get the LoadBalancer's DNS name
+      shell: "./bin/kubectl get svc {{ ENVIRONMENT_NAME }}-service"
+      register: elb_dns
+      args:
+        chdir: $HOME
+
+    - name: Copy the output to a local file
+      copy:
+        content: "{{ elb_dns.stdout }}"
+        dest: "~/elb_dns.txt"
+      delegate_to: localhost
