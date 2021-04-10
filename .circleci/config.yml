@@ -45,7 +45,7 @@ jobs:
 
       - setup_remote_docker:
           version: 19.03.13
-
+      - run: echo "This is pipeline ID << pipeline.id >>"
       - run:
           name: Build docker container
           command: |
