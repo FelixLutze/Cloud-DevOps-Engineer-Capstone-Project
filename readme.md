@@ -43,12 +43,12 @@ I used CircleCi to create a CI/CD Pipeline to test and deploy changes manually b
 Linting is used to check if the Application is syntactically correct.
 This process makes sure that the code quality is always as good as possible.
 
-This is the output when the step fails:
+#### This is the output when the step fails:
 
 ![Linting step fail](./screenshots/linting_step_fail.PNG)
 
 
-This is the output when the step passes:
+#### This is the output when the step passes:
 
 ![Linting step fail](./screenshots/linting_step_success.PNG)
 
