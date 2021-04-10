@@ -1,5 +1,6 @@
 Description: >
-  Capstone project for Cloud DevOps Engineering Nanodegree
+  Felix Lutze / Capstone Project
+  Creates the nodegroup for the Amazon EKS Cluster
 Parameters:
   EnvironmentName:
     Description: An Environment name that will be prefixed to resources
