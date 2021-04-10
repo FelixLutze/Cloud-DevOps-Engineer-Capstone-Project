@@ -11,6 +11,10 @@
 
 - name: "Copy the binary to a folder to the $PATH"
   shell: mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+  args:
+    chdir: $HOME
 
 - name: "Add the $HOME/bin path to the shell initialization file"
   shell: mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+  args:
+    chdir: $HOME
