@@ -30,7 +30,7 @@
     - name: Set the aws_secret_access_key
       shell: "aws configure set aws_secret_access_key {{ AWS_SECRET_ACCESS_KEY }}"
     - name: Set the default.region
-      shell: "aws configure set aws_access_key_id {{ AWS_DEFAULT_REGION }}"
+      shell: "aws configure set default.region {{ AWS_DEFAULT_REGION }}"
 
 - name: "Fetch kubectl config"
   hosts: management
