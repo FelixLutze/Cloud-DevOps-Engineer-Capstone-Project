@@ -33,7 +33,7 @@
       shell: "aws configure set aws_access_key_id {{ AWS_DEFAULT_REGION }}"
 
 - name: "Configure EKS"
-  hosts: management
+  hosts: management[0]
   user: ubuntu
   gather_facts: false
   become: yes
