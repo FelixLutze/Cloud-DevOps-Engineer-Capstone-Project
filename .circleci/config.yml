@@ -179,7 +179,7 @@ jobs:
                 ansible-playbook -i ~/inventory.txt configure-cluster.yml
               fi
       - run:
-          name: Wait for LoadBalancer domain to become reachable
+          name: Wait for LoadBalancer's domain to become reachable
           command: |
             if grep -q "No changes to deploy" ~/checkIfDeployed.txt
               then
@@ -187,9 +187,17 @@ jobs:
                 echo "Our management instances are already configured."
               else
                 cat ~/inventory.txt
-                echo "Wait 90 seconds..."
-                sleep 90
+                echo "Wait 60 seconds..."
+                sleep 60
               fi
+      - run:
+          name: Display the LoadBalancer's DNS name
+          command: |
+            cat ~/elb_dns.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - elb_dns.txt
 
 #  deploy-docker:
 #    docker:
@@ -246,9 +254,6 @@ workflows:
       - configure-cluster:
           requires:
             - configure-infrastructure
-#      - deploy-docker:
-#          requires:
-#            - configure-infrastructure
-#      - smoke-test:
-#          requires:
-#            - deploy-docker
+      - deploy-docker:
+          requires:
+            - configure-infrastructure
