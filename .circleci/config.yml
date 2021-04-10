@@ -98,7 +98,6 @@ jobs:
               --region ${AWS_DEFAULT_REGION} \
               --parameter-overrides file://cloudformation/nodegroup-parameters.json \
               --capabilities CAPABILITY_NAMED_IAM
-          no_output_timeout: 15m
       - run:
           name: Ensure management instances exists
           command: |
