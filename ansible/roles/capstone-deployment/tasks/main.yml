@@ -4,6 +4,6 @@
     dest: $HOME
 
 - name: "Apply deployment configuration"
-  shell: kubectl apply -f capstone-deployment.yaml
+  shell: ./bin/kubectl apply -f capstone-deployment.yaml
   args:
     chdir: $HOME

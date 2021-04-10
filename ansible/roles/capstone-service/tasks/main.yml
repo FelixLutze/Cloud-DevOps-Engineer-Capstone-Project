@@ -4,6 +4,6 @@
     dest: $HOME
 
 - name: "Create service configuration"
-  command: kubectl create -f capstone-service.yaml
+  command: ./bin/kubectl create -f capstone-service.yaml
   args:
     chdir: $HOME
