@@ -87,6 +87,7 @@ jobs:
               --region ${AWS_DEFAULT_REGION} \
               --parameter-overrides file://cloudformation/cluster-parameters.json \
               --capabilities CAPABILITY_NAMED_IAM
+          no_output_timeout: 15m
       - run:
           name: Ensure Nodegroup exists
           command: |
