@@ -8,6 +8,11 @@
     CIRCLE_BUILD_NUM: "{{ lookup('env', 'CIRCLE_BUILD_NUM') }}"
   tasks:
     - name: Update the deployment to run the latest version
-      shell: "./bin/kubectl set image deployment.v1.apps/{{ ENVIRONMENT_NAME }}-deployment {{ ENVIRONMENT_NAME }}-app=felixlutze/{{ ENVIRONMENT_NAME }}:{{ CIRCLE_BUILD_NUM }} --record=true"
+      shell: "./bin/kubectl set image deployments/{{ ENVIRONMENT_NAME }}-deployment {{ ENVIRONMENT_NAME }}-app=felixlutze/{{ ENVIRONMENT_NAME }}:{{ CIRCLE_BUILD_NUM }}"
+      args:
+        chdir: $HOME
+
+    - name: Check if deployment ist successful
+      shell: "./bin/kubectl rollout status deployments/{{ ENVIRONMENT_NAME }}-deployment"
       args:
         chdir: $HOME
