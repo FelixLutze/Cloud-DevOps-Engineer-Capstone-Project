@@ -67,4 +67,6 @@ capstone-project-service   LoadBalancer   10.100.240.221   a9d7166a2525d405db009
 kubernetes                 ClusterIP      10.100.0.1       <none>                                                                       443/TCP        80m
 ```
 
-Public LB-DNS: http://a9d7166a2525d405db00907ffb57de4e-1479088191.eu-central-1.elb.amazonaws.com
+Public LB DNS: http://a9d7166a2525d405db00907ffb57de4e-1479088191.eu-central-1.elb.amazonaws.com
+
+![Access LB DNS](./screenshots/access_lb_dns_demo.PNG)
