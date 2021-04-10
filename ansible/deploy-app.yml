@@ -6,5 +6,7 @@
   vars:
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
   tasks:
-    - name: Set the aws_access_key_id
+    - name: Update the deployment to run the latest version
       shell: "./bin/kubectl set image deployment.v1.apps/{{ ENVIRONMENT_NAME }}-deployment {{ ENVIRONMENT_NAME }}-app=felixlutze/{{ ENVIRONMENT_NAME }} --record=true"
+      args:
+        chdir: $HOME
