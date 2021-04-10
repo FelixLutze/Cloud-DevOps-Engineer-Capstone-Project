@@ -4,6 +4,12 @@
   user: ubuntu
   gather_facts: false
   become: yes
+  pre_tasks:
+    - name: "Install 'unzip'"
+      apt:
+        name: [ "unzip" ]
+        state: latest
+        update_cache: yes
 
   roles:
     - install-awscli
