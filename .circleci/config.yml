@@ -233,7 +233,7 @@ workflows:
             - deploy-infrastructure
       - configure-cluster:
           requires:
-            - deploy-cluster
+            - configure-infrastructure
 #      - deploy-docker:
 #          requires:
 #            - configure-infrastructure
