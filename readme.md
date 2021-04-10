@@ -24,7 +24,7 @@ The CloudFormation Deployment can be broken down into four Parts:
 - **Networking**, to ensure new nodes can communicate with the Cluster
 - **Elastic Kubernetes Service (EKS)** is used to create a Kubernetes Cluster
 - **NodeGroup**, each NodeGroup has a set of rules to define how instances are operated and created for the EKS-Cluster
-- **Management** is needed to configure and manage the Cluster and its deployments and services. I created two hosts for extra redundancy.
+- **Management** is needed to configure and manage the Cluster and its deployments and services. I created two management hosts for extra redundancy if one of them fails.
 
 #### List of deployed Stacks:
 ![CloudFormation](./screenshots/cloudformation_stacks.PNG)
